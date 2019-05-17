@@ -1,19 +1,19 @@
 # from http://nuclear.mutantstargoat.com/articles/make/
 
-src = $(wildcard *.c)
-obj = $(src:.c=.o)
+src = $(wildcard *.cpp)
+obj = $(src:.cpp=.o)
 dep = $(obj:.o=.d)
 
 CFLAGS = -Wall
 LDFLAGS = -lncurses
 
 clara: $(obj)
-	gcc -o $@ $^ $(LDFLAGS)
+	g++ -o $@ $^ $(LDFLAGS)
 
 -include $(dep)
 
 %.d: %.c
-	gcc $(CFLAGS) $< -MM -MT $(@:.d=.o) >$@
+	g++ $(CFLAGS) $< -MM -MT $(@:.d=.o) >$@
 
 .PHONY: clean
 clean:
