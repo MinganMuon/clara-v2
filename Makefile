@@ -2,24 +2,24 @@
 
 src = $(wildcard *.cpp)
 obj = $(src:.cpp=.o)
-dep = $(obj:.o=.d)
+# dep = $(obj:.o=.d)
 
-CFLAGS = -Wall
+CXXFLAGS = -Wall -std=c++11
 LDFLAGS = -lncurses
 
 clara: $(obj)
-	g++ -o $@ $^ $(LDFLAGS)
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
--include $(dep)
+#-include $(dep)
 
-%.d: %.c
-	g++ $(CFLAGS) $< -MM -MT $(@:.d=.o) >$@
+# %.d: %.c
+#	g++ $(CFLAGS) $< -MM -MT $(@:.d=.o) >$@
 
 .PHONY: clean
 clean:
 	rm -f $(obj) clara 
 
-.PHONY: cleandep
-cleandep:
-	rm -f $(dep)
+# .PHONY: cleandep
+# cleandep:
+#	rm -f $(dep)
 

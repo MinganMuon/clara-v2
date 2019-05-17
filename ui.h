@@ -1,7 +1,7 @@
 // ui.h
 
-#ifndef BOARD_H
-#define BOARD_H
+#ifndef UI_H
+#define UI_H
 
 #include "board.h"
 
@@ -10,20 +10,42 @@
 #include <string>
 #include <array>
 
-enum UIState {MAIN_MENU, GAME_UI, UI_LOADED};
-enum GameUIState {GAME_IN_PROGRESS, GAME_FINISHED, GAME_NOT_STARTED, GAME_UI_NOT_LOADED};
+enum UIState {MAIN_MENU, GAME_UI, UI_LOADED, UI_NOT_LOADED};
+enum GameUIState {GAME_UI_NOT_LOADED, GAME_UI_LOADED};
+
+class GameUI {
+	public:
+		void initGameUI();
+		void closeGameUI();
+		void runGameUI(); // runs the ui in whatever state it is in
+		GameUIState getGameUIState();
+	private:
+		GameUIState m_gameuistate;
+
+		// setup options
+		bool m_whiteoverblack = false;
+		
+		std::array<int,2> m_pos = {{0,0}}; // cursor position
+		BoardType m_board = BlackAboveWhiteBoard;
+
+		void drawGameSetupMenu();
+		bool runGameSetup();
+		void runGame();
+};
 
 class MainUI {
 	public:
 		bool initUI();
 		void closeUI();
 		void MainMenu();
+		UIState getUIState();
 	private:
 		UIState m_uistate;
-		GameUIState m_gameuistate;
 
 		void drawMainMenu();
-}
+
+		GameUI TheGameUI;
+};
 
 #endif
 

@@ -44,6 +44,8 @@ std::array<int,2> paddedToCoords(int tile)
 		coords[1] = 0;
 		coords[0] = (tile - 37)*2 + 1;
 	}
+
+	return coords;
 }
 
 /*
@@ -98,9 +100,11 @@ int countPieces(BoardType sourceBoard, TileType targetTileType)
 {
 	int count=0;
 
-	for (int &tile : source) {
+	for (TileType &tile : sourceBoard) {
 		if (tile == targetTileType)
 			count++;
 	}
+
+	return count;
 }
 
