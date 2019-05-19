@@ -25,8 +25,10 @@ class GameUI {
 		void drawgameinfo();
 		void drawboardoutline();
 		void drawboardtiles(BoardType theboard);
+		void drawcursor();
 		void drawtilediags();
 		void drawgamehelp();
+		void drawui();
 		bool rungameui();
 		
 		bool runfinishedui();

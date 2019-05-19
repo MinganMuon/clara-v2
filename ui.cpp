@@ -251,25 +251,90 @@ void GameUI::drawboardtiles(BoardType theboard)
 	}
 }
 
+void GameUI::drawcursor()
+{
+	mvaddstr((5+1+m_pos[1]*3)+1, (5+2+m_pos[0]*4), "*");
+}
+
 void GameUI::drawtilediags()
 {
+	std::array<int,2> sul; // start up left
+	sul[0] = 5+33+5;
+	sul[1] = 5+7+2;
+
+	mvaddstr(sul[1],sul[0],   "+-----------------------------------+");
+	mvaddstr(sul[1]+1,sul[0], "|             Tile Diag             |");
+	mvaddstr(sul[1]+2,sul[0], "|                                   |");
+	mvaddstr(sul[1]+3,sul[0], "|                                   |");
+	mvaddstr(sul[1]+4,sul[0], "|                                   |");
+	mvaddstr(sul[1]+5,sul[0], "|                                   |");
+	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
 
 }
 
 void GameUI::drawgamehelp()
 {
+	std::array<int,2> sul; // start up left
+	sul[0] = 5+33+5;
+	sul[1] = 5+7+2+7+2;
 
+	mvaddstr(sul[1],sul[0],   "+-----------------------------------+");
+	mvaddstr(sul[1]+1,sul[0], "|             Commands              |");
+	mvaddstr(sul[1]+2,sul[0], "| Q     - Quit                      |");
+	mvaddstr(sul[1]+3,sul[0], "| wasd  - Move                      |");
+	mvaddstr(sul[1]+4,sul[0], "| Space - Select                    |");
+	mvaddstr(sul[1]+5,sul[0], "| m     - Move                      |");
+	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
+}
+
+void GameUI::drawui()
+{
+	clear();
+
+	drawboardoutline();
+	drawboardtiles(m_board);
+	drawcursor();
+
+	drawgameinfo();
+	drawtilediags();
+	drawgamehelp();
 }
 
 bool GameUI::rungameui()
 {
-	clear();
-	drawboardoutline();
-	drawboardtiles(m_board);
-	drawgameinfo();
-	drawtilediags();
-	drawgamehelp();
-	getch();
+	drawui();
+	int exit = false;
+	while (!exit) {
+		// process input
+		char ch = getch();
+		switch (ch) {
+			case 'Q':
+				exit=true;
+				break;
+
+			// movement commands
+			case 'w':
+				if (m_pos[1] > 0)
+					m_pos[1]--;
+				break;
+			case 's': 
+				if (m_pos[1] < 7)
+					m_pos[1]++;
+				break;
+			case 'a':
+				if (m_pos[0] > 0)
+					m_pos[0]--;
+				break;
+			case 'd': 
+				if (m_pos[0] < 7)
+					m_pos[0]++;
+				break;
+		}
+
+		// draw
+		drawui();
+	}
+
 	return true;
 }
 
