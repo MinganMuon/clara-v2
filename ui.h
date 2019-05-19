@@ -4,6 +4,8 @@
 #define UI_H
 
 #include "board.h"
+#include "move.h"
+#include "gamestate.h"
 
 #include <curses.h>
 #include <ncurses.h>
@@ -35,7 +37,7 @@ class GameUI {
 		bool m_playerwon;
 		
 		// setup options
-		bool m_playerwhite = true;
+		PlayerType m_player = WHITE;
 		std::array<int,2> m_pos = {{0,0}}; // cursor position
 		BoardType m_board = BlackAboveWhiteBoard;
 

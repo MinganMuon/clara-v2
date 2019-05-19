@@ -21,7 +21,7 @@
 
 #include <array>
 
-enum TileType {
+enum TileType : short {
 	TILE_BLACK, TILE_BLACK_KING, TILE_WHITE, TILE_WHITE_KING, TILE_EMPTY, TILE_INVALID
 };
 

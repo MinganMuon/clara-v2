@@ -160,10 +160,10 @@ bool GameUI::runsetupui()
 		char key = getch();
 		if (key == 'W')
 		{
-			m_playerwhite = true;
+			m_player = WHITE;
 			exit = true;
 		} else if (key == 'B') {
-			m_playerwhite = false;
+			m_player = BLACK;
 			exit = true;
 		}
 	}
@@ -198,7 +198,7 @@ void GameUI::drawgameinfo()
 	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
 
 	std::string you = "White";
-	if (!m_playerwhite)
+	if (m_player == BLACK)
 		you = "Black";
 	mvaddstr(sul[1]+2,sul[0]+7, you.c_str());
 
