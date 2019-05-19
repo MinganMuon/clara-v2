@@ -12,7 +12,7 @@ enum WinnerType : short {BLACK_WON, WHITE_WON, DRAW, IN_PROGRESS};
 
 class GameState {
 	public:
-		void initGameState(int turnsWithoutCaptureLimit=50);
+		void initGameState(int numTurnsWithoutCaptureLimit=50);
 		BoardType getBoard();
 		PlayerType whoIsToMove();
 		int getTurnNumber();
@@ -20,7 +20,7 @@ class GameState {
 		std::vector<Move> getListOfMoves();
 		int getTurnsWithoutCapture();
 
-		bool makeMove(Move themove, bool force=false);
+		bool makeMove(Move themove);
 		void agreeToADraw();
 	private:
 		BoardType m_board;
@@ -28,8 +28,8 @@ class GameState {
 		int m_turnnumber;
 		WinnerType m_winner;
 		std::vector<Move> m_listofmoves;
-		int turnsWithoutCapture;
-		int turnsWithoutCaptureLimit;
+		int m_turnsWithoutCapture;
+		int m_turnsWithoutCaptureLimit;
 };
 
 WinnerType findWinnerStatus(BoardType board);

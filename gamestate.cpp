@@ -24,3 +24,122 @@ WinnerType findWinnerStatus(BoardType board)
 	return IN_PROGRESS;
 }
 
+// this function does no error checking
+BoardType applyMove(Move themove, BoardType theboard)
+{
+	BoardType board = theboard;
+	board[themove.tileTo] = theboard[themove.tileFrom];
+	board[themove.tileFrom] = TILE_EMPTY;
+	for (int jt : themove.tilesJumped)
+	{
+		board[jt] = TILE_EMPTY;
+	}
+	if (themove.pieceKinged)
+	{
+		if (board[themove.tileTo] == TILE_WHITE) {
+			board[themove.tileTo] = TILE_WHITE_KING;
+		} else if (board[themove.tileTo] == TILE_BLACK) {
+			board[themove.tileTo] = TILE_BLACK_KING;
+		}
+	}
+	return board;
+}
+
+void GameState::initGameState(int numTurnsWithoutCaptureLimit)
+{
+	m_board = BlackAboveWhiteBoard;
+	m_playertomove = WHITE;
+	m_turnnumber = 0;
+	m_winner = IN_PROGRESS;
+	m_listofmoves = {};
+	m_turnsWithoutCapture = 0;
+	m_turnsWithoutCaptureLimit = numTurnsWithoutCaptureLimit;
+}
+
+BoardType GameState::getBoard()
+{
+	return m_board;
+}
+
+PlayerType GameState::whoIsToMove()
+{
+	return m_playertomove;
+}
+
+int GameState::getTurnNumber()
+{
+	return m_turnnumber;
+}
+
+WinnerType GameState::getWinStatus()
+{
+	if (m_winner == IN_PROGRESS)
+	{
+		findWinnerStatus(m_board);
+		if (m_winner == IN_PROGRESS)
+		{
+			if (m_turnsWithoutCapture > m_turnsWithoutCaptureLimit)
+			{
+				m_winner = DRAW;
+				return m_winner;
+			} else {
+				return m_winner;
+			}
+		} else {
+			return m_winner;
+		}
+	}
+	return m_winner;
+}
+
+std::vector<Move> GameState::getListOfMoves()
+{
+	return m_listofmoves;
+}
+
+int GameState::getTurnsWithoutCapture()
+{
+	return m_turnsWithoutCapture;
+}
+
+bool GameState::makeMove(Move themove)
+{
+	if (isPieceWhite(m_board[themove.tileFrom], m_board))
+	{
+		if (m_playertomove == WHITE) {
+			m_listofmoves.push_back(themove);
+			applyMove(themove, getBoard());
+			m_playertomove = BLACK;
+			if (themove.tilesJumped.empty()) {
+				m_turnsWithoutCapture++;	
+			} else {
+				m_turnsWithoutCapture = 0;
+			}
+			getWinStatus(); // update win status, really
+			return true;
+		}
+	}
+	if (isPieceBlack(m_board[themove.tileFrom], m_board))
+	{
+		if (m_playertomove == BLACK) {
+			m_listofmoves.push_back(themove);
+			applyMove(themove, getBoard());
+			m_playertomove = WHITE;
+			m_turnnumber++;
+			if (themove.tilesJumped.empty()) {
+				m_turnsWithoutCapture++;	
+			} else {
+				m_turnsWithoutCapture = 0;
+			}
+			getWinStatus(); // update win status, really
+			return true;
+		}
+	}
+	return false;
+}
+
+void GameState::agreeToADraw()
+{
+	m_winner = DRAW;
+}
+

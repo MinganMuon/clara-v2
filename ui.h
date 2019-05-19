@@ -37,16 +37,13 @@ class GameUI {
 		
 		void closeUI();
 
-		bool m_gamecompleted = false;
-		bool m_playerwon;
-		
 		PlayerType m_player = WHITE;
 		std::string m_selectedAI;
 
 		std::array<int,2> m_pos = {{0,0}}; // cursor position
 		std::array<int,2> m_selectedPos = {{-1,-1}};
-		BoardType m_board = BlackAboveWhiteBoard;
-
+		std::vector<std::array<int,2>> m_destlist = {{}};
+		GameState TheGameState;
 };
 
 class MainUI {

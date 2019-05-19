@@ -40,26 +40,26 @@ std::vector<Move> MoveGenerator::getMoveMoves(int tile, BoardType board)
 			}
 		}
 	} else if (isPieceBlack(tile,board)) {
-		if (board[tile+5] == TILE_EMPTY) {
-			if (isTileOnBlackKingLine(tile+5)) {
-				movelist.push_back(Move(tile,tile+5,std::vector<int>(),true));
+		if (board[tile-5] == TILE_EMPTY) {
+			if (isTileOnBlackKingLine(tile-5)) {
+				movelist.push_back(Move(tile,tile-5,std::vector<int>(),true));
 			} else {
-				movelist.push_back(Move(tile,tile+5,std::vector<int>(),false));
-			}
-		}
-		if (board[tile+4] == TILE_EMPTY) {
-			if (isTileOnBlackKingLine(tile+4)) {
-				movelist.push_back(Move(tile,tile+4,std::vector<int>(),true));
-			} else {
-				movelist.push_back(Move(tile,tile+4,std::vector<int>(),false));
-			}
-		}
-		if (board[tile] == TILE_BLACK) {
-			if (board[tile-5] == TILE_EMPTY) {
 				movelist.push_back(Move(tile,tile-5,std::vector<int>(),false));
 			}
-			if (board[tile-4] == TILE_EMPTY) {
+		}
+		if (board[tile-4] == TILE_EMPTY) {
+			if (isTileOnBlackKingLine(tile-4)) {
+				movelist.push_back(Move(tile,tile-4,std::vector<int>(),true));
+			} else {
 				movelist.push_back(Move(tile,tile-4,std::vector<int>(),false));
+			}
+		}
+		if (board[tile] == TILE_BLACK_KING) {
+			if (board[tile+5] == TILE_EMPTY) {
+				movelist.push_back(Move(tile,tile+5,std::vector<int>(),false));
+			}
+			if (board[tile+4] == TILE_EMPTY) {
+				movelist.push_back(Move(tile,tile+4,std::vector<int>(),false));
 			}
 		}
 	}

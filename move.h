@@ -26,5 +26,7 @@ class MoveGenerator {
 
 extern MoveGenerator MoveGen;
 
+BoardType applyMove(Move themove, BoardType theboard);
+
 #endif
 
