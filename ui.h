@@ -13,6 +13,9 @@
 #include <array>
 #include <vector>
 
+// for the random AI, take this out when I move the random AI outside the UI subsystem
+#include <random>
+
 class GameUI {
 	public:
 		bool runUI();

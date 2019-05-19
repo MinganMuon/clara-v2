@@ -343,13 +343,12 @@ void GameUI::drawui()
 bool GameUI::rungameui()
 {
 	drawui();
-	int exit = false;
-	while (!exit) {
+	while (true) {
 		// process input
 		char ch = getch();
 		switch (ch) {
 			case 'Q':
-				exit=true;
+				return true;
 				break;
 
 			// movement commands
@@ -391,7 +390,25 @@ bool GameUI::rungameui()
 								m_selectedPos = {{-1,-1}};
 								m_destlist = {};
 								if (TheGameState.getWinStatus() != IN_PROGRESS)
-									exit=true;
+									return true;
+
+								// simple random ai
+								std::vector<Move> aimovelist;
+								if (m_player == WHITE)
+								{
+									aimovelist = MoveGen.getPlayerMoves(BLACK,TheGameState.getBoard());
+								} else {
+									aimovelist = MoveGen.getPlayerMoves(WHITE,TheGameState.getBoard());
+								}
+								// yes, this reseeding every time is bad and is going to slow things down and give nonrandom values but it does serve the purpose I'm using it for: a dumb move selector for a dumb AI for testing purposes only
+								std::random_device random_device;
+								std::mt19937 engine{random_device()};
+								std::uniform_int_distribution<int> dist(0, aimovelist.size() - 1); 	
+								Move aimove = aimovelist[dist(engine)];
+								TheGameState.makeMove(aimove);
+								if (TheGameState.getWinStatus() != IN_PROGRESS)
+									return true;
+
 							}
 						}
 					}
