@@ -66,9 +66,6 @@ std::vector<Move> MoveGenerator::getMoveMoves(int tile, BoardType board)
 	return movelist;
 }
 
-#include <curses.h>
-#include <ncurses.h>
-
 std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 {
 	// trying to do the iterator thing manually because I think my overall algorithm is sound
@@ -81,7 +78,7 @@ std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 	{
 		bool newjump = false;
 		int tt = movelist[i].tileTo;
-		if (isPieceWhite(tt,board) && ((board[tt+5] == TILE_BLACK) || (board[tt+5] == TILE_BLACK_KING)) && (board[tt+5+5] == TILE_EMPTY))
+		if (isPieceWhite(tile,board) && ((board[tt+5] == TILE_BLACK) || (board[tt+5] == TILE_BLACK_KING)) && (board[tt+5+5] == TILE_EMPTY))
 		{
 			std::vector<int> tj = movelist[i].tilesJumped;
 			tj.push_back(tt+5);
@@ -89,11 +86,27 @@ std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 			l++;
 			newjump = true;
 		}
-		if (isPieceWhite(tt,board) && ((board[tt+4] == TILE_BLACK) || (board[tt+4] == TILE_BLACK_KING)) && (board[tt+4+4] == TILE_EMPTY))
+		if (isPieceWhite(tile,board) && ((board[tt+4] == TILE_BLACK) || (board[tt+4] == TILE_BLACK_KING)) && (board[tt+4+4] == TILE_EMPTY))
 		{
 			std::vector<int> tj = movelist[i].tilesJumped;
 			tj.push_back(tt+4);
 			movelist.push_back(Move(tile,tt+4+4,tj,false));
+			l++;
+			newjump = true;
+		}
+		if ((board[tile] == TILE_WHITE_KING) && ((board[tt-5] == TILE_BLACK) || (board[tt-5] == TILE_BLACK_KING)) && (board[tt-5-5] == TILE_EMPTY))
+		{
+			std::vector<int> tj = movelist[i].tilesJumped;
+			tj.push_back(tt-5);
+			movelist.push_back(Move(tile,tt-5-5,tj,false));
+			l++;
+			newjump = true;
+		}
+		if ((board[tile] == TILE_WHITE_KING) && ((board[tt-4] == TILE_BLACK) || (board[tt-4] == TILE_BLACK_KING)) && (board[tt-4-4] == TILE_EMPTY))
+		{
+			std::vector<int> tj = movelist[i].tilesJumped;
+			tj.push_back(tt-4);
+			movelist.push_back(Move(tile,tt-4-4,tj,false));
 			l++;
 			newjump = true;
 		}
@@ -110,12 +123,12 @@ std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 		return {};
 
 	// king everyone that can be kinged
-	for (Move &m : movelist)
+	for (unsigned int i = 0; i != movelist.size(); i++)
 	{
-		if ((board[m.tileTo] == TILE_WHITE) && isTileOnWhiteKingLine(m.tileTo))
-			m.pieceKinged = true;
-		if ((board[m.tileTo] == TILE_BLACK) && isTileOnBlackKingLine(m.tileTo))
-			m.pieceKinged = true;
+		if ((board[movelist[i].tileTo] == TILE_WHITE) && isTileOnWhiteKingLine(movelist[i].tileTo))
+			movelist[i].pieceKinged = true;
+		if ((board[movelist[i].tileTo] == TILE_BLACK) && isTileOnBlackKingLine(movelist[i].tileTo))
+			movelist[i].pieceKinged = true;
 	}
 
 	return movelist;
@@ -163,33 +176,42 @@ std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 	*/
 }
 
+// disregards the possibility of another piece's jump possibilities limiting what this tile can do
 std::vector<Move> MoveGenerator::getPieceMoves(int tile, BoardType board)
 {
 	std::vector<Move> movelist;
-
-	// get regular moves
-	std::vector<Move> toadd = getMoveMoves(tile, board);
-	for (Move m : toadd)
-		movelist.push_back(m);
 	
 	// get jumps
 	std::vector<Move> toaddjumps = getJumpMoves(tile, board);
 	for (Move m : toaddjumps)
 		movelist.push_back(m);
-	
+
+	// if there are possible jumps then one has to take them
+	if (movelist.empty()) {
+		// get regular moves
+		std::vector<Move> toadd = getMoveMoves(tile, board);
+		for (Move m : toadd)
+			movelist.push_back(m);
+	}	
+
 	return movelist;
 }
 
 std::vector<Move> MoveGenerator::getPlayerMoves(PlayerType player, BoardType board)
 {
 	std::vector<Move> movelist;
+	bool jumps = false;
 	if (player == WHITE) {
 		for (decltype(board.size()) i=0; i != board.size(); i++)
 		{
 			if (isPieceWhite(i,board)) {
 				std::vector<Move> toadd = getPieceMoves(i, board);
 				for (Move m : toadd)
+				{
+					if (!m.tilesJumped.empty())
+						jumps = true;
 					movelist.push_back(m);
+				}
 			}
 		}
 	} else if (player == BLACK) {
@@ -198,10 +220,31 @@ std::vector<Move> MoveGenerator::getPlayerMoves(PlayerType player, BoardType boa
 			if (isPieceBlack(i,board)) {
 				std::vector<Move> toadd = getPieceMoves(i, board);
 				for (Move m : toadd)
+				{
+					if (!m.tilesJumped.empty())
+						jumps = true;
 					movelist.push_back(m);
+				}
 			}
 		}
 	}
+	
+	// if there is a possible jump, remove all non-jumps
+	// I wish I could wrangle iterators into submission for this...
+	if (jumps) {
+		int l = movelist.size();
+		int i = 0;
+		while (i != l)
+		{
+			if (movelist[i].tilesJumped.empty())
+			{
+				movelist.erase(movelist.begin() + i);
+				l--;
+			}
+			i++;
+		}
+	}	
+
 	return movelist;
 }
 

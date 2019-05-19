@@ -275,18 +275,20 @@ void GameUI::drawselectedtile()
 		m_destlist = {};
 		int padded = coordsToPadded(m_selectedPos);
 		if (padded != -1) {
-			std::vector<Move> movelist = MoveGen.getPieceMoves(padded, TheGameState.getBoard());
+			std::vector<Move> movelist = MoveGen.getPlayerMoves(m_player, TheGameState.getBoard());
 			for (Move m : movelist)
 			{
-				std::array<int,2> dest = paddedToCoords(m.tileTo);
-				mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)-1, "^");
-				mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)+1, "^");
-				m_destlist.push_back(dest);
-				
-				for (int jt : m.tilesJumped)
-				{
-					std::array<int,2> jumped = paddedToCoords(jt);
-					mvaddstr((5+1+jumped[1]*3)+1, (5+2+jumped[0]*4), "!");
+				if (m.tileFrom == padded) {
+					std::array<int,2> dest = paddedToCoords(m.tileTo);
+					mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)-1, "^");
+					mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)+1, "^");
+					m_destlist.push_back(dest);
+					
+					for (int jt : m.tilesJumped)
+					{
+						std::array<int,2> jumped = paddedToCoords(jt);
+						mvaddstr((5+1+jumped[1]*3)+1, (5+2+jumped[0]*4), "!");
+					}
 				}
 			}
 		 }
