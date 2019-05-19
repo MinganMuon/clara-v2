@@ -177,7 +177,7 @@ bool GameUI::runsetupui()
 		char key = getch();
 		if (key == 'R')
 		{
-			m_selectedAI = "random";
+			m_selectedAI = "Random";
 			exit = true;
 		}
 	}
@@ -193,10 +193,10 @@ void GameUI::drawgameinfo()
 
 	mvaddstr(sul[1],sul[0],   "+-----------------------------------+");
 	mvaddstr(sul[1]+1,sul[0], "|             Game Info             |");
-	mvaddstr(sul[1]+2,sul[0], "| You:        AI:                   |");
-	mvaddstr(sul[1]+3,sul[0], "| Turn:                             |");
-	mvaddstr(sul[1]+4,sul[0], "|     white pieces,    black pieces |");
-	mvaddstr(sul[1]+5,sul[0], "|                                   |");
+	mvaddstr(sul[1]+2,sul[0], "| You:                              |");
+	mvaddstr(sul[1]+3,sul[0], "| AI:                               |");
+	mvaddstr(sul[1]+4,sul[0], "| Turn                              |");
+	mvaddstr(sul[1]+5,sul[0], "|    white pieces,    black pieces  |");
 	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
 
 	std::string you = "White";
@@ -204,12 +204,12 @@ void GameUI::drawgameinfo()
 		you = "Black";
 	mvaddstr(sul[1]+2,sul[0]+7, you.c_str());
 
-	mvaddstr(sul[1]+2,sul[0]+18, m_selectedAI.c_str());
+	mvaddstr(sul[1]+3,sul[0]+6, m_selectedAI.c_str());
 
-	mvaddstr(sul[1]+3,sul[0]+8, "0");
+	mvaddstr(sul[1]+4,sul[0]+7, "0, White to move");
 
-	mvaddstr(sul[1]+4,sul[0]+2, (std::to_string(countPieces(m_board, TILE_BLACK) + countPieces(m_board, TILE_BLACK_KING))).c_str());
-	mvaddstr(sul[1]+4,sul[0]+20, (std::to_string(countPieces(m_board, TILE_WHITE) + countPieces(m_board, TILE_WHITE_KING))).c_str());
+	mvaddstr(sul[1]+5,sul[0]+19, (std::to_string(countPieces(m_board, TILE_BLACK) + countPieces(m_board, TILE_BLACK_KING))).c_str());
+	mvaddstr(sul[1]+5,sul[0]+2, (std::to_string(countPieces(m_board, TILE_WHITE) + countPieces(m_board, TILE_WHITE_KING))).c_str());
 }
 
 void GameUI::drawboardoutline()
