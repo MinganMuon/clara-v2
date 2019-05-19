@@ -11,6 +11,7 @@
 #include <ncurses.h>
 #include <string>
 #include <array>
+#include <vector>
 
 class GameUI {
 	public:
@@ -26,6 +27,7 @@ class GameUI {
 		void drawboardoutline();
 		void drawboardtiles(BoardType theboard);
 		void drawcursor();
+		void drawselectedtile();
 		void drawtilediags();
 		void drawgamehelp();
 		void drawui();
@@ -38,12 +40,13 @@ class GameUI {
 		bool m_gamecompleted = false;
 		bool m_playerwon;
 		
-		// setup options
 		PlayerType m_player = WHITE;
+		std::string m_selectedAI;
+
 		std::array<int,2> m_pos = {{0,0}}; // cursor position
+		std::array<int,2> m_selectedPos = {{-1,-1}};
 		BoardType m_board = BlackAboveWhiteBoard;
 
-		std::string m_selectedAI;
 };
 
 class MainUI {

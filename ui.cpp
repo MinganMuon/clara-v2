@@ -84,6 +84,7 @@ bool GameUI::initUI()
 {
 	m_gamecompleted = false;
 	m_pos[0] = 0; m_pos[1] = 0;
+	m_selectedPos[0] = -1; m_selectedPos[1] = -1;
 	return true;
 }
 
@@ -256,6 +257,31 @@ void GameUI::drawcursor()
 	mvaddstr((5+1+m_pos[1]*3)+1, (5+2+m_pos[0]*4), "*");
 }
 
+void GameUI::drawselectedtile()
+{
+	if (m_selectedPos[0] != -1) {
+		mvaddstr((5+1+m_selectedPos[1]*3), (5+2+m_selectedPos[0]*4)-1, "#");
+		mvaddstr((5+1+m_selectedPos[1]*3), (5+2+m_selectedPos[0]*4)+1, "#");
+		
+		int padded = coordsToPadded(m_selectedPos);
+		if (padded != -1) {
+			std::vector<Move> movelist = MoveGen.getPieceMoves(padded, m_board);
+			for (Move m : movelist)
+			{
+				std::array<int,2> dest = paddedToCoords(m.tileTo);
+				mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)-1, "^");
+				mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)+1, "^");
+
+				for (int jt : m.tilesJumped)
+				{
+					std::array<int,2> jumped = paddedToCoords(jt);
+					mvaddstr((5+1+jumped[1]*3)+1, (5+2+jumped[0]*4), "!");
+				}
+			}
+		}
+	}
+}
+
 void GameUI::drawtilediags()
 {
 	std::array<int,2> sul; // start up left
@@ -279,11 +305,11 @@ void GameUI::drawgamehelp()
 	sul[1] = 5+7+2+7+2;
 
 	mvaddstr(sul[1],sul[0],   "+-----------------------------------+");
-	mvaddstr(sul[1]+1,sul[0], "|             Commands              |");
-	mvaddstr(sul[1]+2,sul[0], "| Q     - Quit                      |");
-	mvaddstr(sul[1]+3,sul[0], "| wasd  - Move                      |");
-	mvaddstr(sul[1]+4,sul[0], "| Space - Select                    |");
-	mvaddstr(sul[1]+5,sul[0], "| m     - Move                      |");
+	mvaddstr(sul[1]+1,sul[0], "|   Commands           Symbols      |");
+	mvaddstr(sul[1]+2,sul[0], "| Q     - Quit    * - Cursor        |");
+	mvaddstr(sul[1]+3,sul[0], "| wasd  - Move    # - Selected Tile |");
+	mvaddstr(sul[1]+4,sul[0], "| Space - Select  ^ - Destination   |");
+	mvaddstr(sul[1]+5,sul[0], "| m     - Move    ! - Jumped Tiles  |");
 	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
 }
 
@@ -294,6 +320,7 @@ void GameUI::drawui()
 	drawboardoutline();
 	drawboardtiles(m_board);
 	drawcursor();
+	drawselectedtile();
 
 	drawgameinfo();
 	drawtilediags();
@@ -328,6 +355,16 @@ bool GameUI::rungameui()
 			case 'd': 
 				if (m_pos[0] < 7)
 					m_pos[0]++;
+				break;
+
+			// selection
+			case ' ':
+				if (m_pos == m_selectedPos)
+				{
+					m_selectedPos = {{-1,-1}};
+				} else {
+					m_selectedPos = m_pos;
+				}
 				break;
 		}
 
