@@ -303,11 +303,11 @@ void GameUI::drawtilediags()
 	mvaddstr(sul[1]+1,sul[0], "|             Tile Diag             |");
 	mvaddstr(sul[1]+2,sul[0], "|                                   |");
 	mvaddstr(sul[1]+3,sul[0], "|               Diag                |");
-	mvaddstr(sul[1]+4,sul[0], "| turns since last cap:             |");
+	mvaddstr(sul[1]+4,sul[0], "| moves since last cap:             |");
 	mvaddstr(sul[1]+5,sul[0], "|                                   |");
 	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
 
-	std::string sincecap = std::to_string(TheGameState.getTurnsWithoutCapture());
+	std::string sincecap = std::to_string(TheGameState.getMovesWithoutCapture());
 	mvaddstr(sul[1]+4,sul[0]+25, sincecap.c_str());
 }
 

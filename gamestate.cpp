@@ -45,15 +45,15 @@ BoardType applyMove(Move themove, BoardType theboard)
 	return board;
 }
 
-void GameState::initGameState(int numTurnsWithoutCaptureLimit)
+void GameState::initGameState(int numMovesWithoutCaptureLimit)
 {
 	m_board = BlackAboveWhiteBoard;
 	m_playertomove = WHITE;
 	m_turnnumber = 0;
 	m_winner = IN_PROGRESS;
 	m_listofmoves = {};
-	m_turnsWithoutCapture = 0;
-	m_turnsWithoutCaptureLimit = numTurnsWithoutCaptureLimit;
+	m_movesWithoutCapture = 0;
+	m_movesWithoutCaptureLimit = numMovesWithoutCaptureLimit;
 }
 
 BoardType GameState::getBoard()
@@ -78,7 +78,7 @@ WinnerType GameState::getWinStatus()
 		findWinnerStatus(m_board);
 		if (m_winner == IN_PROGRESS)
 		{
-			if (m_turnsWithoutCapture > m_turnsWithoutCaptureLimit)
+			if (m_movesWithoutCapture > m_movesWithoutCaptureLimit)
 			{
 				m_winner = DRAW;
 				return m_winner;
@@ -97,9 +97,9 @@ std::vector<Move> GameState::getListOfMoves()
 	return m_listofmoves;
 }
 
-int GameState::getTurnsWithoutCapture()
+int GameState::getMovesWithoutCapture()
 {
-	return m_turnsWithoutCapture;
+	return m_movesWithoutCapture;
 }
 
 bool GameState::makeMove(Move themove)
@@ -111,9 +111,9 @@ bool GameState::makeMove(Move themove)
 			m_board = applyMove(themove, getBoard());
 			m_playertomove = BLACK;
 			if (themove.tilesJumped.empty()) {
-				m_turnsWithoutCapture++;	
+				m_movesWithoutCapture++;	
 			} else {
-				m_turnsWithoutCapture = 0;
+				m_movesWithoutCapture = 0;
 			}
 			getWinStatus(); // update win status, really
 			return true;
@@ -127,9 +127,9 @@ bool GameState::makeMove(Move themove)
 			m_playertomove = WHITE;
 			m_turnnumber++;
 			if (themove.tilesJumped.empty()) {
-				m_turnsWithoutCapture++;	
+				m_movesWithoutCapture++;	
 			} else {
-				m_turnsWithoutCapture = 0;
+				m_movesWithoutCapture = 0;
 			}
 			getWinStatus(); // update win status, really
 			return true;
