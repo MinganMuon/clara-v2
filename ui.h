@@ -35,7 +35,7 @@ class GameUI {
 		bool m_playerwon;
 		
 		// setup options
-		bool m_whiteoverblack = false;
+		bool m_playerwhite = true;
 		std::array<int,2> m_pos = {{0,0}}; // cursor position
 		BoardType m_board = BlackAboveWhiteBoard;
 
