@@ -10,27 +10,31 @@
 #include <string>
 #include <array>
 
-enum UIState {MAIN_MENU, GAME_UI, UI_LOADED, UI_NOT_LOADED};
-enum GameUIState {GAME_UI_NOT_LOADED, GAME_UI_LOADED};
-
 class GameUI {
 	public:
-		void initGameUI();
-		void closeGameUI();
-		void runGameUI(); // runs the ui in whatever state it is in
-		GameUIState getGameUIState();
+		bool runUI();
 	private:
-		GameUIState m_gameuistate;
+		bool initUI();
+		
+		void drawcolorchoicemenu();
+		void drawaichoicemenu();
+		bool runsetupui();
 
+		bool rungameui();
+		
+		bool runfinishedui();
+		
+		void closeUI();
+
+		bool m_gamecompleted = false;
+		bool m_playerwon;
+		
 		// setup options
 		bool m_whiteoverblack = false;
-		
 		std::array<int,2> m_pos = {{0,0}}; // cursor position
 		BoardType m_board = BlackAboveWhiteBoard;
 
-		void drawGameSetupMenu();
-		bool runGameSetup();
-		void runGame();
+		std::string m_selectedAI;
 };
 
 class MainUI {
@@ -38,12 +42,10 @@ class MainUI {
 		bool initUI();
 		void closeUI();
 		void MainMenu();
-		UIState getUIState();
 	private:
-		UIState m_uistate;
+		void drawmainmenu();
 
-		void drawMainMenu();
-
+		bool m_loaded = false;
 		GameUI TheGameUI;
 };
 

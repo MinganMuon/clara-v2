@@ -5,134 +5,193 @@
 //                        Main UI
 // --------------------------------------------------------
 
-// note: no error checking, screen size checking, or anything like that is happening here
-// perhaps add it in later
 bool MainUI::initUI()
 {
 	initscr();
-	keypad(stdscr, TRUE);
+	keypad(stdscr, TRUE); 
 	noecho();
 	curs_set(FALSE);
 
-	m_uistate = UI_LOADED;
-	return true; // obviously change this when error checking is included
+	if (LINES < 51 || COLS < 103) {
+		clear();
+		mvaddstr(0, 0, "Error: your console should be at least");
+		mvaddstr(1, 0, "51x103 characters to run this game.");
+		mvaddstr(3, 0, "Press any key to quit.");
+		move(4, 0);
+		getch();
+		return false;
+	}
+
+	clear();
+	refresh();
+
+	m_loaded = true;
+	return true;
 }
 
 void MainUI::closeUI()
 {
-	delwin(stdscr);
 	endwin();
-	m_uistate = UI_NOT_LOADED;
 }
 
-void MainUI::drawMainMenu()
+void MainUI::drawmainmenu()
 {
 	clear();
+
+	// window is at least 51x103
+	mvaddstr(5,39, "+-----------------+");
+	mvaddstr(6,39, "|      Clara      |");
+	mvaddstr(7,39, "|                 |");
+	mvaddstr(8,39, "|    Main Menu    |");
+	mvaddstr(9,39, "+-----------------+");
+
+	mvaddstr(15,42,    "+----------+"    );
+	mvaddstr(16,42,    "+  (P)lay  +"    );
+	mvaddstr(17,42,    "+----------+"    );
 	
-	// later make sure that everything will fit on screen...
-	mvaddstr(5,5, "Main Menu:");
-	mvaddstr(6,5, "----------");
-	mvaddstr(8,5, "a) Play a game");
-	mvaddstr(9,5, "q) Quit");
+	mvaddstr(20,42,    "+----------+"    );
+	mvaddstr(21,42,    "+  (Q)uit  +"    );
+	mvaddstr(22,42,    "+----------+"    );
 
 	refresh();
 }
 
 void MainUI::MainMenu()
 {
-	m_uistate = MAIN_MENU;
-	drawMainMenu();
+	if (!m_loaded)
+		return;
+	
+	drawmainmenu();
 
 	bool exit = false;
 	while (!exit) {
-		char ch = getch();
-		switch (ch) {
-			case 'q':
-				exit=true;
-				break;
-			case 'a':
-				m_uistate = GAME_UI;
-				TheGameUI.initGameUI();
-				TheGameUI.runGameUI();
-				TheGameUI.closeGameUI();
-				m_uistate = MAIN_MENU;
-				drawMainMenu();
-				break;	
-		}
+		char key = getch();
+		if (key == 'P')
+		{
+			GameUI TheGameUI;
+			TheGameUI.runUI();
+			drawmainmenu();
+		}	
+		else if (key == 'Q')
+			exit = true;
 	}
-}
-
-UIState MainUI::getUIState()
-{
-	return m_uistate;
 }
 
 //                      Game UI
 // --------------------------------------------------------
 
-void GameUI::initGameUI()
+bool GameUI::initUI()
 {
-	m_gameuistate = GAME_UI_LOADED;
+	m_gamecompleted = false;
+	m_pos[0] = 0; m_pos[1] = 0;
+	return true;
 }
 
-void GameUI::closeGameUI()
+void GameUI::closeUI()
 {
-	m_gameuistate = GAME_UI_NOT_LOADED;
+
 }
 
-void GameUI::runGameUI()
+bool GameUI::runUI()
 {
-	if (m_gameuistate == GAME_UI_LOADED) {
-		if (runGameSetup())
+	if (initUI()) {
+		if (runsetupui())
 		{
-			runGame();
+			if (rungameui())
+			{
+				if (runfinishedui())
+				{
+					closeUI();
+					return true;
+				}
+			}
 		}
 	}
+	closeUI();
+	return false;
 }
 
-void GameUI::drawGameSetupMenu()
+void GameUI::drawcolorchoicemenu()
 {
 	clear();
+
+	// window is at least 51x103
+	mvaddstr(5,39, "+----------------+");
+	mvaddstr(6,39, "|  Game Options  |");
+	mvaddstr(7,39, "|                |");
+	mvaddstr(8,39, "|  Color Choice  |");
+	mvaddstr(9,39, "+----------------+");
+
+	mvaddstr(15,42,    "+---------+"   );
+	mvaddstr(16,42,    "+ (W)hite +"   );
+	mvaddstr(17,42,    "+---------+"   );
 	
-	// later make sure that everything will fit on screen...
-	mvaddstr(5,5, "Setup A Game:");
-	mvaddstr(6,5, "-------------");
-	mvaddstr(8,5, "a) Play as White");
-	mvaddstr(9,5, "b) Play as Black");
-	mvaddstr(10,5, "q) Quit");
+	mvaddstr(20,42,    "+---------+"    );
+	mvaddstr(21,42,    "+ (B)lack +"    );
+	mvaddstr(22,42,    "+---------+"    );
 
 	refresh();
 }
 
-// returns false if user quit the process, true if game was properly set up
-bool GameUI::runGameSetup()
+void GameUI::drawaichoicemenu()
 {
-	drawGameSetupMenu();
+	clear();
 
-	while (true) {
-		char ch = getch();
-		switch (ch) {
-			case 'q':
-				return false;
-			case 'a':
-				m_whiteoverblack = false;
-				m_board = WhiteAboveBlackBoard;
-				return true;
-			case 'b':
-				m_whiteoverblack = true;
-				m_board = BlackAboveWhiteBoard;
-				return true;
+	// window is at least 51x103
+	mvaddstr(5,39, "+----------------+");
+	mvaddstr(6,39, "|  Game Options  |");
+	mvaddstr(7,39, "|                |");
+	mvaddstr(8,39, "|   AI  Choice   |");
+	mvaddstr(9,39, "+----------------+");
+
+	mvaddstr(15,42,   "+----------+"   );
+	mvaddstr(16,42,   "+ (R)andom +"   );
+	mvaddstr(17,42,   "+----------+"   );
+	
+	refresh();
+}
+
+bool GameUI::runsetupui()
+{
+	drawcolorchoicemenu();
+	int exit = false;
+	while (!exit)
+	{
+		char key = getch();
+		if (key == 'W')
+		{
+			m_whiteoverblack = false;
+			m_board = BlackAboveWhiteBoard;
+			exit = true;
+		} else if (key == 'B') {
+			m_whiteoverblack = true;
+			m_board = WhiteAboveBlackBoard;
+			exit = true;
 		}
 	}
+
+	drawaichoicemenu();
+	exit = false;
+	while (!exit)
+	{
+		char key = getch();
+		if (key == 'R')
+		{
+			m_selectedAI = "random";
+			exit = true;
+		}
+	}
+
+	return true;
 }
 
-void GameUI::runGame()
+bool GameUI::rungameui()
 {
-	return;
+	return true;
 }
 
-GameUIState GameUI::getGameUIState()
+bool GameUI::runfinishedui()
 {
-	return m_gameuistate;
+	return true;
 }
 
