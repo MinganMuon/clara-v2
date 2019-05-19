@@ -71,34 +71,37 @@ std::vector<Move> MoveGenerator::getMoveMoves(int tile, BoardType board)
 
 std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 {
-	// fix this mess later
-	// general idea: iterate over an expanding movelist, finding all the jumps that can be made from it, adding those moves to the end of the list, and then deleting the move at the iterator if any jumps from the ending position of that move were found; repeat this until we reach the end of the list, i.e. no more jumps are possible
+	// trying to do the iterator thing manually because I think my overall algorithm is sound
+	// haha it seems to work!
 	std::vector<Move> movelist;
 	movelist.push_back(Move(tile,tile,{},false));
-	auto iter = std::begin(movelist);
-	while (iter != std::end(movelist)) {
+	unsigned int l = movelist.size();
+	unsigned int i = 0;
+	while (i != l)
+	{
 		bool newjump = false;
-		int tt = (*iter).tileTo;
+		int tt = movelist[i].tileTo;
 		if (isPieceWhite(tt,board) && ((board[tt+5] == TILE_BLACK) || (board[tt+5] == TILE_BLACK_KING)) && (board[tt+5+5] == TILE_EMPTY))
 		{
-			std::vector<int> tj = (*iter).tilesJumped;
+			std::vector<int> tj = movelist[i].tilesJumped;
 			tj.push_back(tt+5);
 			movelist.push_back(Move(tile,tt+5+5,tj,false));
+			l++;
 			newjump = true;
 		}
 		if (isPieceWhite(tt,board) && ((board[tt+4] == TILE_BLACK) || (board[tt+4] == TILE_BLACK_KING)) && (board[tt+4+4] == TILE_EMPTY))
 		{
-			std::vector<int> tj = (*iter).tilesJumped;
+			std::vector<int> tj = movelist[i].tilesJumped;
 			tj.push_back(tt+4);
 			movelist.push_back(Move(tile,tt+4+4,tj,false));
+			l++;
 			newjump = true;
 		}
 		if (newjump) {
-			iter = movelist.erase(iter);
-			mvaddstr(0,0,"n");
-			getch();
+			movelist.erase(movelist.begin() + i);
+			l--;
 		} else {
-			++iter;
+			i++;
 		}
 	}
 
@@ -114,7 +117,50 @@ std::vector<Move> MoveGenerator::getJumpMoves(int tile, BoardType board)
 		if ((board[m.tileTo] == TILE_BLACK) && isTileOnBlackKingLine(m.tileTo))
 			m.pieceKinged = true;
 	}
+
 	return movelist;
+
+	// old code
+	/*
+	// fix this mess later
+	// general idea: iterate over an expanding movelist, finding all the jumps that can be made from it, adding those moves to the end of the list, and then deleting the move at the iterator if any jumps from the ending position of that move were found; repeat this until we reach the end of the list, i.e. no more jumps are possible
+	std::vector<Move> movelist;
+	movelist.push_back(Move(tile,tile,{},false));
+	auto enditer = std::end(movelist);
+	auto iter = std::begin(movelist);
+	while (iter != enditer)
+	{
+		bool newjump = false;
+		int tt = (*iter).tileTo;
+		if (isPieceWhite(tt,board) && ((board[tt+5] == TILE_BLACK) || (board[tt+5] == TILE_BLACK_KING)) && (board[tt+5+5] == TILE_EMPTY))
+		{
+			std::vector<int> tj = (*iter).tilesJumped;
+			tj.push_back(tt+5);
+			movelist.push_back(Move(tile,tt+5+5,tj,false));
+			enditer = std::end(movelist); // this doesn't seem to help anything
+			// and I don't think the end iterator is invalidated by anything anyway
+			// been stuck on this for like two hours...
+			newjump = true;
+			mvaddstr(0,0,"n");
+			getch();
+		}
+		if (isPieceWhite(tt,board) && ((board[tt+4] == TILE_BLACK) || (board[tt+4] == TILE_BLACK_KING)) && (board[tt+4+4] == TILE_EMPTY))
+		{
+			std::vector<int> tj = (*iter).tilesJumped;
+			tj.push_back(tt+4);
+			movelist.push_back(Move(tile,tt+4+4,tj,false));
+			enditer = std::end(movelist);
+			newjump = true;
+			mvaddstr(0,0,"n");
+			getch();
+		}
+		if (newjump) {
+			iter = movelist.erase(iter);
+		} else {
+			++iter;
+		}
+	}
+	*/
 }
 
 std::vector<Move> MoveGenerator::getPieceMoves(int tile, BoardType board)
