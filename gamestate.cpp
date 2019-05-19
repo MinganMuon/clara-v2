@@ -104,11 +104,11 @@ int GameState::getTurnsWithoutCapture()
 
 bool GameState::makeMove(Move themove)
 {
-	if (isPieceWhite(m_board[themove.tileFrom], m_board))
+	if (isPieceWhite(themove.tileFrom, m_board))
 	{
 		if (m_playertomove == WHITE) {
 			m_listofmoves.push_back(themove);
-			applyMove(themove, getBoard());
+			m_board = applyMove(themove, getBoard());
 			m_playertomove = BLACK;
 			if (themove.tilesJumped.empty()) {
 				m_turnsWithoutCapture++;	
@@ -119,11 +119,11 @@ bool GameState::makeMove(Move themove)
 			return true;
 		}
 	}
-	if (isPieceBlack(m_board[themove.tileFrom], m_board))
+	if (isPieceBlack(themove.tileFrom, m_board))
 	{
 		if (m_playertomove == BLACK) {
 			m_listofmoves.push_back(themove);
-			applyMove(themove, getBoard());
+			m_board = applyMove(themove, getBoard());
 			m_playertomove = WHITE;
 			m_turnnumber++;
 			if (themove.tilesJumped.empty()) {
