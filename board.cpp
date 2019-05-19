@@ -108,3 +108,31 @@ int countPieces(BoardType sourceBoard, TileType targetTileType)
 	return count;
 }
 
+bool isPieceWhite(int tile, BoardType board)
+{
+	if ((board[tile] == TILE_WHITE) || (board[tile] == TILE_WHITE_KING))
+		return true;
+	return false;
+}
+
+bool isPieceBlack(int tile, BoardType board)
+{
+	if ((board[tile] == TILE_BLACK) || (board[tile] == TILE_BLACK_KING))
+		return true;
+	return false;
+}
+
+bool isTileOnWhiteKingLine(int tile)
+{
+	if ((tile > 36) && (tile < 41))
+		return true;
+	return false;
+}
+
+bool isTileOnBlackKingLine(int tile)
+{
+	if ((tile > 4) && (tile < 9))
+		return true;
+	return false;
+}
+

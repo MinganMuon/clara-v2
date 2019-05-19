@@ -21,6 +21,7 @@
 
 #include <array>
 
+enum PlayerType : short {BLACK, WHITE};
 enum TileType : short {
 	TILE_BLACK, TILE_BLACK_KING, TILE_WHITE, TILE_WHITE_KING, TILE_EMPTY, TILE_INVALID
 };
@@ -33,6 +34,10 @@ const BoardType BlackAboveWhiteBoard = {TILE_INVALID, TILE_INVALID, TILE_INVALID
 std::array<int,2> paddedToCoords(int tile);
 int coordsToPadded(std::array<int,2> coords);
 int countPieces(BoardType sourceBoard, TileType targetTileType);
+bool isPieceWhite(int tile, BoardType board);
+bool isPieceBlack(int tile, BoardType board);
+bool isTileOnWhiteKingLine(int tile);
+bool isTileOnBlackKingLine(int tile);
 
 #endif
 
