@@ -272,14 +272,14 @@ void GameUI::drawselectedtile()
 				std::array<int,2> dest = paddedToCoords(m.tileTo);
 				mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)-1, "^");
 				mvaddstr((5+1+dest[1]*3)+1, (5+2+dest[0]*4)+1, "^");
-
+				
 				for (int jt : m.tilesJumped)
 				{
 					std::array<int,2> jumped = paddedToCoords(jt);
 					mvaddstr((5+1+jumped[1]*3)+1, (5+2+jumped[0]*4), "!");
 				}
 			}
-		}
+		 }
 	}
 }
 
