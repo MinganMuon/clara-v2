@@ -185,8 +185,93 @@ bool GameUI::runsetupui()
 	return true;
 }
 
+void GameUI::drawgameinfo()
+{
+	std::array<int,2> sul; // start up left
+	sul[0] = 5+33+5;
+	sul[1] = 5;
+
+	mvaddstr(sul[1],sul[0],   "+-----------------------------------+");
+	mvaddstr(sul[1]+1,sul[0], "|             Game Info             |");
+	mvaddstr(sul[1]+2,sul[0], "| You:        AI:                   |");
+	mvaddstr(sul[1]+3,sul[0], "| Turn:                             |");
+	mvaddstr(sul[1]+4,sul[0], "|     white pieces,    black pieces |");
+	mvaddstr(sul[1]+5,sul[0], "|                                   |");
+	mvaddstr(sul[1]+6,sul[0], "+-----------------------------------+");
+
+	std::string you = "White";
+	if (m_whiteoverblack)
+		you = "Black";
+	mvaddstr(sul[1]+2,sul[0]+7, you.c_str());
+
+	mvaddstr(sul[1]+2,sul[0]+18, m_selectedAI.c_str());
+
+	mvaddstr(sul[1]+3,sul[0]+8, "0");
+
+	mvaddstr(sul[1]+4,sul[0]+2, (std::to_string(countPieces(m_board, TILE_BLACK) + countPieces(m_board, TILE_BLACK_KING))).c_str());
+	mvaddstr(sul[1]+4,sul[0]+20, (std::to_string(countPieces(m_board, TILE_WHITE) + countPieces(m_board, TILE_WHITE_KING))).c_str());
+}
+
+void GameUI::drawboardoutline()
+{
+	// the board is 33 across and 25 down
+	for (int i=0; i<8; i++) {
+	mvaddstr(5+i*3,5, "+---+---+---+---+---+---+---+---+");
+	mvaddstr(6+i*3,5, "|   |   |   |   |   |   |   |   |");
+	mvaddstr(7+i*3,5, "|   |   |   |   |   |   |   |   |");
+	}
+	mvaddstr(5+8*3,5, "+---+---+---+---+---+---+---+---+");
+}
+
+void GameUI::drawboardtiles(BoardType theboard)
+{
+	for (decltype(theboard.size()) i=0; i != theboard.size(); i++)
+	{
+		if ((theboard[i] != TILE_INVALID) && (theboard[i] != TILE_EMPTY)) {
+			std::array<int,2> coords = paddedToCoords(i);
+			std::string piecechar = "E"; // e for error
+			switch (theboard[i]) {
+				case TILE_WHITE:
+					piecechar = "w";
+					break;
+				case TILE_WHITE_KING:
+					piecechar = "W";
+					break;
+				case TILE_BLACK:
+					piecechar = "b";
+					break;
+				case TILE_BLACK_KING:
+					piecechar = "B";
+					break;
+				case TILE_INVALID:
+					break;
+				case TILE_EMPTY:
+					break;
+			}
+			mvaddstr((5+1+coords[1]*3), (5+2+coords[0]*4), piecechar.c_str());
+		}
+	}
+}
+
+void GameUI::drawtilediags()
+{
+
+}
+
+void GameUI::drawgamehelp()
+{
+
+}
+
 bool GameUI::rungameui()
 {
+	clear();
+	drawboardoutline();
+	drawboardtiles(m_board);
+	drawgameinfo();
+	drawtilediags();
+	drawgamehelp();
+	getch();
 	return true;
 }
 

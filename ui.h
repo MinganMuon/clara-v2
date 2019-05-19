@@ -20,6 +20,11 @@ class GameUI {
 		void drawaichoicemenu();
 		bool runsetupui();
 
+		void drawgameinfo();
+		void drawboardoutline();
+		void drawboardtiles(BoardType theboard);
+		void drawtilediags();
+		void drawgamehelp();
 		bool rungameui();
 		
 		bool runfinishedui();
