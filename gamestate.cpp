@@ -71,24 +71,22 @@ int GameState::getTurnNumber()
 	return m_turnnumber;
 }
 
-WinnerType GameState::getWinStatus()
+void GameState::updateWinStatus()
 {
-	if (m_winner == IN_PROGRESS)
-	{
+	if (m_winner == IN_PROGRESS) {
 		m_winner = findWinnerStatus(m_board);
 		if (m_winner == IN_PROGRESS)
 		{
 			if (m_movesWithoutCapture > m_movesWithoutCaptureLimit)
 			{
 				m_winner = DRAW;
-				return m_winner;
-			} else {
-				return m_winner;
 			}
-		} else {
-			return m_winner;
 		}
 	}
+}
+
+WinnerType GameState::getWinStatus()
+{
 	return m_winner;
 }
 
@@ -115,7 +113,7 @@ bool GameState::makeMove(Move themove)
 			} else {
 				m_movesWithoutCapture = 0;
 			}
-			getWinStatus(); // update win status, really
+			updateWinStatus();
 			return true;
 		}
 	}
@@ -131,7 +129,7 @@ bool GameState::makeMove(Move themove)
 			} else {
 				m_movesWithoutCapture = 0;
 			}
-			getWinStatus(); // update win status, really
+			updateWinStatus();
 			return true;
 		}
 	}

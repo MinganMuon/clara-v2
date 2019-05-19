@@ -30,6 +30,8 @@ class GameState {
 		std::vector<Move> m_listofmoves;
 		int m_movesWithoutCapture;
 		int m_movesWithoutCaptureLimit;
+
+		void updateWinStatus();
 };
 
 WinnerType findWinnerStatus(BoardType board);

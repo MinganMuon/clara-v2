@@ -22,6 +22,7 @@ class MoveGenerator {
 		std::vector<Move> getPlayerMoves(PlayerType player, BoardType board);
 	private:
 		std::vector<Move> getMoveMoves(int tile, BoardType board);
+		std::vector<Move> getJumpMoves(int tile, BoardType board);
 };
 
 extern MoveGenerator MoveGen;
