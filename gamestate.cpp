@@ -75,7 +75,7 @@ WinnerType GameState::getWinStatus()
 {
 	if (m_winner == IN_PROGRESS)
 	{
-		findWinnerStatus(m_board);
+		m_winner = findWinnerStatus(m_board);
 		if (m_winner == IN_PROGRESS)
 		{
 			if (m_movesWithoutCapture > m_movesWithoutCaptureLimit)

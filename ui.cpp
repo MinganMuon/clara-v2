@@ -425,20 +425,23 @@ bool GameUI::rungameui()
 
 bool GameUI::runfinishedui()
 {
+	// allow the user to see what the board looked like
 	clear();
+	drawboardoutline();
+	drawboardtiles(TheGameState.getBoard());
 
-	mvaddstr(5,5, "+-----------------------------------------------+");
-	mvaddstr(6,5, "+                  Game Over                    +");
-	mvaddstr(7,5, "+                                               +");
-	mvaddstr(8,5, "+                                               +");
-	mvaddstr(9,5, "+                                               +");
-	mvaddstr(10,5,"+                                               +");
-	mvaddstr(11,5,"+   Press any key to return to the main menu.   +");
-	mvaddstr(12,5,"+-----------------------------------------------+");
+	mvaddstr(5,43, "+-----------------------------------------------+");
+	mvaddstr(6,43, "+                  Game Over                    +");
+	mvaddstr(7,43, "+                                               +");
+	mvaddstr(8,43, "+                                               +");
+	mvaddstr(9,43, "+                                               +");
+	mvaddstr(10,43,"+                                               +");
+	mvaddstr(11,43,"+   Press any key to return to the main menu.   +");
+	mvaddstr(12,43,"+-----------------------------------------------+");
 
 	std::string played = "You played against ";
 	std::string playedtext = played + m_selectedAI + ".";
-	mvaddstr(8,6+(int)((46-playedtext.length())/2), playedtext.c_str());
+	mvaddstr(8,44+(int)((46-playedtext.length())/2), playedtext.c_str());
 
 	WinnerType winstatus = TheGameState.getWinStatus();
 	std::string wonorlost = "lost.";
@@ -451,7 +454,7 @@ bool GameUI::runfinishedui()
 	}
 	std::string youtext = "You ";
 	std::string text = youtext + wonorlost;
-	mvaddstr(9,6+(int)((46-text.length())/2), text.c_str());
+	mvaddstr(9,44+(int)((46-text.length())/2), text.c_str());
 
 	getch();
 
