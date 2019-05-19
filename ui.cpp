@@ -19,6 +19,7 @@ bool MainUI::initUI()
 		mvaddstr(3, 0, "Press any key to quit.");
 		move(4, 0);
 		getch();
+		endwin();
 		return false;
 	}
 
